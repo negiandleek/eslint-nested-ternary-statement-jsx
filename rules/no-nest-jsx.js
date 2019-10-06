@@ -10,26 +10,32 @@ module.exports = {
   create: function(context) {
     const maxOfSiblings = 2;
     const maxOfNest = 2;
-    const stackJsxExpressionContainer = [];
     const stackJsxElement = [];
+    let conditionDeep = -1;
 
-    function stashStackJsxExpressionContainer(node) {
-      stackJsxExpressionContainer.push(node);
+    function diveExpressionContainer(node) {
+      if (node.expression.type === "ConditionalExpression") {
+        conditionDeep += 1;
+      }
     }
 
     function stashAndCheckJsxElement(node) {
-      if (stackJsxExpressionContainer.length <= 0) {
+      if (conditionDeep <= -1) {
         return false;
       }
 
-      stackJsxElement.push(node);
+      if (!stackJsxElement[conditionDeep]) {
+        stackJsxElement[conditionDeep] = [];
+      }
 
-      if (stackJsxElement.length > maxOfNest) {
+      stackJsxElement[conditionDeep].push(node);
+
+      if (stackJsxElement[conditionDeep].length > maxOfNest) {
         context.report({
           node,
           messageId: "exceedNest",
           data: {
-            num: stackJsxElement.length,
+            num: stackJsxElement[conditionDeep].length,
             max: maxOfNest
           }
         });
@@ -51,23 +57,23 @@ module.exports = {
       }
     }
 
-    function popStackJsxExpressionContainer() {
-      if (stackJsxExpressionContainer.length > 0) {
-        stackJsxExpressionContainer.pop();
+    function surfaceExpressionContainer(node) {
+      if (node.expression.type === "ConditionalExpression") {
+        conditionDeep -= 1;
       }
     }
 
-    function popPopJsxElement() {
-      if (stackJsxElement.length > 0) {
-        stackJsxElement.pop();
+    function popJsxElement() {
+      if (stackJsxElement[conditionDeep]) {
+        stackJsxElement[conditionDeep].pop();
       }
     }
 
     return {
-      JSXExpressionContainer: stashStackJsxExpressionContainer,
-      "JSXExpressionContainer:exit": popStackJsxExpressionContainer,
+      JSXExpressionContainer: diveExpressionContainer,
+      "JSXExpressionContainer:exit": surfaceExpressionContainer,
       JSXElement: stashAndCheckJsxElement,
-      "JSXElement:exit": popPopJsxElement
+      "JSXElement:exit": popJsxElement
     };
   }
 };
