@@ -8,10 +8,11 @@ module.exports = {
     }
   },
   create: function(context) {
-    const maxOfSiblings = 2;
+    const maxOfSiblings = 3;
     const maxOfNest = 2;
     const stackJsxElement = [];
     let conditionDeep = -1;
+    let total = [];
 
     function diveExpressionContainer(node) {
       if (node.expression.type === "ConditionalExpression") {
@@ -28,6 +29,10 @@ module.exports = {
         stackJsxElement[conditionDeep] = [];
       }
 
+      if (typeof total[conditionDeep] === "undefined") {
+        total[conditionDeep] = 0;
+      }
+
       stackJsxElement[conditionDeep].push(node);
 
       if (stackJsxElement[conditionDeep].length > maxOfNest) {
@@ -42,8 +47,10 @@ module.exports = {
       }
 
       const length = node.children.filter(it => {
-        return it.type === "JSXElement";
+        return it.type === "JSXElement" || it.type === "JSXExpressionContainer";
       }).length;
+
+      total[conditionDeep] = total[conditionDeep] + length;
 
       if (length > maxOfSiblings) {
         context.report({
@@ -59,6 +66,7 @@ module.exports = {
 
     function surfaceExpressionContainer(node) {
       if (node.expression.type === "ConditionalExpression") {
+        total.pop();
         conditionDeep -= 1;
       }
     }
