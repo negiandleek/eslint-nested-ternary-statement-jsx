@@ -1,10 +1,15 @@
 const test = () => {
-	const is = true
-	return (
-		<div>
-			{is ? <div>aaa</div> : <div>bbb</div>}
-		</div>
-	)	
-}
+  const is = true;
+  return (
+    <div>
+      {is ? (
+        <ul>
+          <li>aa</li>
+          <li>aa</li>
+        </ul>
+      ) : null}
+    </div>
+  );
+};
 
-export default test
+export default test;

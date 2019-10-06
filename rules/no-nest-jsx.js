@@ -8,43 +8,66 @@ module.exports = {
     }
   },
   create: function(context) {
-    const maxOfSiblings = 1;
-    const maxOfNest = 1;
-    const stack = [];
+    const maxOfSiblings = 2;
+    const maxOfNest = 2;
+    const stackJsxExpressionContainer = [];
+    const stackJsxElement = [];
 
-    function checkJsx(node) {
-      stack.push(node);
+    function stashStackJsxExpressionContainer(node) {
+      stackJsxExpressionContainer.push(node);
+    }
 
-      if (stack.length > maxOfNest) {
+    function stashAndCheckJsxElement(node) {
+      if (stackJsxExpressionContainer.length <= 0) {
+        return false;
+      }
+
+      stackJsxElement.push(node);
+
+      if (stackJsxElement.length > maxOfNest) {
         context.report({
           node,
           messageId: "exceedNest",
           data: {
-            num: stack.length,
+            num: stackJsxElement.length,
             max: maxOfNest
           }
         });
       }
 
-      if (node.children.length > maxOfSiblings) {
+      const length = node.children.filter(it => {
+        return it.type === "JSXElement";
+      }).length;
+
+      if (length > maxOfSiblings) {
         context.report({
           node: node,
           messageId: "exceedSiblings",
           data: {
-            num: node.children.length,
+            num: length,
             max: maxOfSiblings
           }
         });
       }
     }
 
-    function popStack() {
-      stack.pop();
+    function popStackJsxExpressionContainer() {
+      if (stackJsxExpressionContainer.length > 0) {
+        stackJsxExpressionContainer.pop();
+      }
+    }
+
+    function popPopJsxElement() {
+      if (stackJsxElement.length > 0) {
+        stackJsxElement.pop();
+      }
     }
 
     return {
-      JSXElement: checkJsx,
-      "JSXElement:exit": popStack
+      JSXExpressionContainer: stashStackJsxExpressionContainer,
+      "JSXExpressionContainer:exit": popStackJsxExpressionContainer,
+      JSXElement: stashAndCheckJsxElement,
+      "JSXElement:exit": popPopJsxElement
     };
   }
 };
