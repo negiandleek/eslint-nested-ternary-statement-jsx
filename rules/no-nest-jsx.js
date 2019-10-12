@@ -8,7 +8,7 @@ module.exports = {
     }
   },
   create: function(context) {
-    const maxOfSiblings = 3;
+    const maxOfSiblings = 2;
     const maxOfNest = 2;
     const stackJsxElement = [];
     let conditionDeep = -1;
@@ -47,7 +47,31 @@ module.exports = {
       }
 
       const length = node.children.filter(it => {
-        return it.type === "JSXElement" || it.type === "JSXExpressionContainer";
+        if(it.type !== "JSXElement" && it.type !== "JSXExpressionContainer"){
+          return false
+        }
+
+        if(it.type === "JSXElement"){
+          return true
+        }
+
+        const callee = it.expression.callee
+        if(callee && callee.type === "CallExpression"){
+          const body = callee.body
+
+          if(body.type === "JSXElement") {
+            return true
+          }
+
+          if(body.type === "BlockStatement"){
+            const found = body.body.find(it => it.ReturnStatement === "ReturnStatement")
+            if(found && found.arguments && found.arguments.type === "JSXElement"){
+              return true
+            }
+          }
+        }
+
+        return false
       }).length;
 
       total[conditionDeep] = total[conditionDeep] + length;

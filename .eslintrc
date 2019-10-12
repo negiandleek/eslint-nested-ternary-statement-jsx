@@ -1,14 +1,14 @@
 {
-	"env": {"es6": true"},
-	"parserOptions": {
-		"sourceType": "module",
-		"ecmaFeatures": {
-			"jsx": true	
-		}
-	},
-	"extends": ["eslint:recommended"],
-	"rules":{
-		"no-hoge": [2, ["hoge", "fuga", "duga"]],
-		"no-nest-jsx": 2
-	}
+  "env": { "es6": true },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
+  "rules": {
+    "no-hoge": [2, ["hoge", "fuga", "duga"]],
+    "no-nest-jsx": 2
+  }
 }
