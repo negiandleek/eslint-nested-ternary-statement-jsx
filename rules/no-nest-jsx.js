@@ -35,12 +35,17 @@ module.exports = {
 
       stackJsxElement[conditionDeep].push(node);
 
-      if (stackJsxElement.length > maxOfNest) {
+      const hgoe = stackJsxElement.reduce(
+        (memo, current) => {
+          return memo += current.length
+        }, 0)
+
+      if (hgoe > maxOfNest) {
         context.report({
           node,
           messageId: "exceedNest",
           data: {
-            num: stackJsxElement.length,
+            num: hgoe,
             max: maxOfNest
           }
         });

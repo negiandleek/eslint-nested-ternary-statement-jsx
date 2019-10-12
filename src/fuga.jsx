@@ -2,19 +2,22 @@ import React from 'react'
 
 const test = () => {
   const is = true;
-  const Component = () => <li>eee</li>;
+  const Component = () => <ul><li>aa</li></ul>;
   return (
     <div>
       {is ? (
         <ul>
+          {is ? (
+            <div>aa</div>
+          ): null}
           <li>aaa</li>
-          {is && <li>bbb</li>}
-          {(() => (
-            <li>ddd</li>
-          ))()}
-          {(() => (
-            <li>ddd</li>
-          ))()}
+          {/* {is && <li>bbb</li>} */}
+          {(() => { 
+            return (
+              <li>ddd</li>
+            )
+          })()}
+          <Component />
         </ul>
       ) : null}
     </div>
