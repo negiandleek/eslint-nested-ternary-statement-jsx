@@ -10,6 +10,7 @@ module.exports = {
   create: function(context) {
     const maxOfSiblings = 3;
     const maxOfNest = 2;
+    const availableScope = false 
     const stackJsxElement = [];
     let conditionDeep = -1;
     let total = [];
@@ -34,18 +35,20 @@ module.exports = {
       }
 
       stackJsxElement[conditionDeep].push(node);
+      
+      const totalLengthNest = availableScope ? 
+        stackJsxElement[conditionDeep].length : 
+        stackJsxElement.reduce(
+          (memo, current) => {
+            return memo += current.length
+          }, 0)
 
-      const hgoe = stackJsxElement.reduce(
-        (memo, current) => {
-          return memo += current.length
-        }, 0)
-
-      if (hgoe > maxOfNest) {
+      if (totalLengthNest > maxOfNest) {
         context.report({
           node,
           messageId: "exceedNest",
           data: {
-            num: hgoe,
+            num: totalLengthNest,
             max: maxOfNest
           }
         });
@@ -89,8 +92,6 @@ module.exports = {
         return false
         
       }).length;
-
-      total[conditionDeep] = total[conditionDeep] + length;
 
       if (length > maxOfSiblings) {
         context.report({
