@@ -8,7 +8,7 @@ module.exports = {
     }
   },
   create: function(context) {
-    const maxOfSiblings = 2;
+    const maxOfSiblings = 3;
     const maxOfNest = 2;
     const stackJsxElement = [];
     let conditionDeep = -1;
@@ -35,12 +35,12 @@ module.exports = {
 
       stackJsxElement[conditionDeep].push(node);
 
-      if (stackJsxElement[conditionDeep].length > maxOfNest) {
+      if (stackJsxElement.length > maxOfNest) {
         context.report({
           node,
           messageId: "exceedNest",
           data: {
-            num: stackJsxElement[conditionDeep].length,
+            num: stackJsxElement.length,
             max: maxOfNest
           }
         });
@@ -54,24 +54,35 @@ module.exports = {
         if(it.type === "JSXElement"){
           return true
         }
+       
+        const expression = it.expression;
 
-        const callee = it.expression.callee
-        if(callee && callee.type === "CallExpression"){
+        if(expression.type === "LogicalExpression"){
+          if((expression.left && expression.left.type) === "JSXElement" || 
+            (expression.right && expression.right.type) === "JSXElement"){
+            return true
+          }
+        }
+
+        const callee = expression.callee
+
+        if(callee && callee.type === "ArrowFunctionExpression"){
           const body = callee.body
-
+          
           if(body.type === "JSXElement") {
             return true
           }
 
           if(body.type === "BlockStatement"){
-            const found = body.body.find(it => it.ReturnStatement === "ReturnStatement")
-            if(found && found.arguments && found.arguments.type === "JSXElement"){
+            const found = body.body.find(it => it.type === "ReturnStatement")
+            if(found && found.argument && found.argument.type === "JSXElement"){
               return true
             }
           }
         }
 
         return false
+        
       }).length;
 
       total[conditionDeep] = total[conditionDeep] + length;
