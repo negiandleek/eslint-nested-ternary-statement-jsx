@@ -3,14 +3,14 @@ module.exports = {
     type: "suggestion",
     messages: {
       exceedSiblings: "Too many siblings {{num}}. Maximum allowed is {{max}}",
-      exceedNest:
+      exceedDeep:
         "Too many nested JSXElement {{num}}. Maximum allowed is {{max}}."
     }
   },
   create: function(context) {
     const maxOfSiblings = 3;
-    const maxOfNest = 2;
-    const availableScope = false 
+    const maxOfDeep = 2;
+    const availableScope = false
     const stackJsxElement = [];
     let conditionDeep = -1;
     let total = [];
@@ -36,20 +36,20 @@ module.exports = {
 
       stackJsxElement[conditionDeep].push(node);
       
-      const totalLengthNest = availableScope ? 
+      const totalLengthDeep = availableScope ? 
         stackJsxElement[conditionDeep].length : 
         stackJsxElement.reduce(
           (memo, current) => {
             return memo += current.length
           }, 0)
 
-      if (totalLengthNest > maxOfNest) {
+      if (totalLengthDeep > maxOfDeep) {
         context.report({
           node,
-          messageId: "exceedNest",
+          messageId: "exceedDeep",
           data: {
-            num: totalLengthNest,
-            max: maxOfNest
+            num: totalLengthDeep,
+            max: maxOfDeep
           }
         });
       }
