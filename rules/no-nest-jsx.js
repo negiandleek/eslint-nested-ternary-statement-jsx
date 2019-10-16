@@ -5,12 +5,31 @@ module.exports = {
       exceedSiblings: "Too many siblings {{num}}. Maximum allowed is {{max}}",
       exceedDeep:
         "Too many nested JSXElement {{num}}. Maximum allowed is {{max}}."
-    }
+    },
+    schema: [
+      {
+        type: "object",
+        properties: {
+          maxOfSiblings: {
+            type: "number",
+            default: 1
+          },
+          maxOfDeep: {
+            type: "number",
+            default: 1
+          },
+          availableScope: {
+            type: "boolean",
+            default: false
+          },
+          additionalProperties: false
+        }
+      }
+    ]
   },
   create: function(context) {
-    const maxOfSiblings = 3;
-    const maxOfDeep = 2;
-    const availableScope = false
+    const { maxOfSiblings = 1, maxOfDeep = 1, availableScope = false } =
+      context.options[0] || {};
     const stackJsxElement = [];
     let conditionDeep = -1;
     let total = [];

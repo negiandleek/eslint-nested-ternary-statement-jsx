@@ -2,7 +2,6 @@ import React from 'react'
 
 const test = () => {
   const is = true;
-  const Component = () => <ul><li>aa</li></ul>;
   return (
     <div>
       {is ? (
@@ -17,7 +16,6 @@ const test = () => {
               <li>ddd</li>
             )
           })()}
-          <Component />
         </ul>
       ) : null}
     </div>
