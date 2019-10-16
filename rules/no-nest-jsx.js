@@ -35,13 +35,12 @@ module.exports = {
       }
 
       stackJsxElement[conditionDeep].push(node);
-      
-      const totalLengthDeep = availableScope ? 
-        stackJsxElement[conditionDeep].length : 
-        stackJsxElement.reduce(
-          (memo, current) => {
-            return memo += current.length
-          }, 0)
+
+      const totalLengthDeep = availableScope
+        ? stackJsxElement[conditionDeep].length
+        : stackJsxElement.reduce((memo, current) => {
+            return (memo += current.length);
+          }, 0);
 
       if (totalLengthDeep > maxOfDeep) {
         context.report({
@@ -55,42 +54,55 @@ module.exports = {
       }
 
       const length = node.children.filter(it => {
-        if(it.type !== "JSXElement" && it.type !== "JSXExpressionContainer"){
-          return false
+        if (it.type !== "JSXElement" && it.type !== "JSXExpressionContainer") {
+          return false;
         }
 
-        if(it.type === "JSXElement"){
-          return true
+        if (it.type === "JSXElement") {
+          return true;
         }
-       
+
         const expression = it.expression;
 
-        if(expression.type === "LogicalExpression"){
-          if((expression.left && expression.left.type) === "JSXElement" || 
-            (expression.right && expression.right.type) === "JSXElement"){
-            return true
+        if (expression.type === "LogicalExpression") {
+          if (
+            (expression.left && expression.left.type) === "JSXElement" ||
+            (expression.right && expression.right.type) === "JSXElement"
+          ) {
+            return true;
           }
         }
 
-        const callee = expression.callee
+        if(expression.type === "ConditionalExpression"){
+          if(
+            (expression.consequent && expression.consequent.type) === "JSXElement" || 
+            (expression.alternate && expression.alternate.type) === "JSXElement"){
+              return true
+            }
+        }
 
-        if(callee && callee.type === "ArrowFunctionExpression"){
-          const body = callee.body
-          
-          if(body.type === "JSXElement") {
-            return true
+        const callee = expression.callee;
+
+        if (callee && callee.type === "ArrowFunctionExpression") {
+          const body = callee.body;
+
+          if (body.type === "JSXElement") {
+            return true;
           }
 
-          if(body.type === "BlockStatement"){
-            const found = body.body.find(it => it.type === "ReturnStatement")
-            if(found && found.argument && found.argument.type === "JSXElement"){
-              return true
+          if (body.type === "BlockStatement") {
+            const found = body.body.find(it => it.type === "ReturnStatement");
+            if (
+              found &&
+              found.argument &&
+              found.argument.type === "JSXElement"
+            ) {
+              return true;
             }
           }
         }
 
-        return false
-        
+        return false;
       }).length;
 
       if (length > maxOfSiblings) {
