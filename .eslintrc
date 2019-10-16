@@ -8,7 +8,6 @@
   },
   "extends": ["eslint:recommended", "plugin:react/recommended"],
   "rules": {
-    "no-hoge": [2, ["hoge", "fuga", "duga"]],
     "no-nest-jsx": [2, { "maxOfSiblings": 2, "maxOfDeep": 2 }]
   }
 }
