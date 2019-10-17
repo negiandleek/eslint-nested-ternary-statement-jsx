@@ -5,18 +5,9 @@ const test = () => {
   return (
     <div>
       {is ? (
-        <ul>
-          {is ? (
-            <div>aa</div>
-          ): null}
-          <li>aaa</li>
-          {/* {is && <li>bbb</li>} */}
-          {(() => { 
-            return (
-              <li>ddd</li>
-            )
-          })()}
-        </ul>
+      <ul>
+        <li>aaa</li>
+      </ul>
       ) : null}
     </div>
   );

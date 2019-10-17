@@ -1,6 +1,6 @@
 "use strict"
 
-const rule = require("../rules/no-hoge");
+const rule = require("../rules/no-nest-jsx");
 
 const RuleTester = require("eslint").RuleTester;
 const ruleTester = new RuleTester();
@@ -9,10 +9,17 @@ const valid = [{
 	code: 'var fuga = "fuga";',
 }];
 
-const invalid = [{
-	code: 'var fuga = "hoge";',
-	options:[["fuga"]],
-	errors: [{ message: "You MUST NOT USE hoge variable.", type: "Identifier" }]
-}];
+// const invalid = [{
+//   code: `
+//     <div>
+//       {is ? (
+//       <ul>
+//         <li>aaa</li>
+//       </ul>
+//       ) : null}
+//     </div>
+//   `,
+// 	errors: [{ message: "Too many nested JSXElement 2. Maximum allowed is 1" }]
+// }];
 
-ruleTester.run("no-hoge", rule, {valid, invalid});
+ruleTester.run("no-nest-jsx", rule, valid);
