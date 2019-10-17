@@ -21,8 +21,7 @@ module.exports = {
           availableScope: {
             type: "boolean",
             default: false
-          },
-          additionalProperties: false
+          }
         }
       }
     ]

@@ -2,9 +2,7 @@
   "devDependencies": {
     "eslint": "^6.4.0",
     "eslint-plugin-react": "^7.16.0",
-    "jest": "^24.9.0"
-  },
-  "dependencies": {
+    "jest": "^24.9.0",
     "react": "^16.10.2"
   },
   "scripts": {
